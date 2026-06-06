@@ -1,0 +1,12 @@
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.env
+
+# PyTorch checkpoints (~15 MB each; keep on Google Drive, not in git)
+*.pth
+
+# Large data archives (place in BirdCLEF_Project/ on Drive)
+*.zip
+embeddings_v2/
+embeddings_v2_TTA/
