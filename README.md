@@ -5,18 +5,16 @@ Reproducible training pipeline for the BirdCLEF+ competition. Designed for Googl
 ## Setup
 
 1. Clone this repository into `BirdCLEF_Project/repro/` on Google Drive.
-2. Place these files in `BirdCLEF_Project/` (parent folder):
-   - `perch_v2_no_dft.onnx`
-   - `embeddings_v2_archive.zip`
-   - `embeddings_v2_TTA_archive.zip`
-3. Open notebooks from Drive in Colab (GPU runtime).
-4. Add `KAGGLE_API_TOKEN` in Colab secrets for notebook 02.
+2. Open notebooks from Drive in Colab (GPU runtime).
+3. Add `KAGGLE_API_TOKEN` in Colab secrets for notebook 02.
+
+Notebook 02 downloads the BirdCLEF competition data and the Perch v2 ONNX model automatically. After a first run, optional embedding archives can live in `BirdCLEF_Project/` on Drive:
 
 ```
 BirdCLEF_Project/
-├── perch_v2_no_dft.onnx
-├── embeddings_v2_archive.zip
-├── embeddings_v2_TTA_archive.zip
+├── perch_v2_no_dft.onnx          # cached by notebook 02 (~394 MB)
+├── embeddings_v2_archive.zip     # optional, after extraction
+├── embeddings_v2_TTA_archive.zip   # optional, after extraction
 └── repro/
     ├── birdclef/
     ├── data/metadata/
@@ -26,14 +24,14 @@ BirdCLEF_Project/
 
 During training, embeddings are unzipped to `/content/` for speed. Models and figures are saved under `repro/outputs/`.
 
-**Git note:** PyTorch checkpoints (`.pth`) are not in this repo — each is ~15 MB and GitHub rejects files over 100 MB. After training, keep checkpoints on Drive under `repro/outputs/models/`. ONNX exports (~33 KB each) and PNG figures are small enough to commit if you want them in the repo.
+**Git note:** PyTorch checkpoints (`.pth`) and the Perch ONNX file are not in this repo. Checkpoints are ~15 MB each; Perch is ~394 MB. After training, keep them on Drive. Your MoE ONNX exports (~33 KB each) and PNG figures are small enough to commit if you want them in the repo.
 
 ## Notebooks
 
 | # | Notebook | Description |
 |---|----------|-------------|
 | 01 | `01_data_exploration.ipynb` | Metadata EDA |
-| 02 | `02_download_and_extract_embeddings.ipynb` | Download data, extract Perch embeddings |
+| 02 | `02_download_and_extract_embeddings.ipynb` | Download data + Perch ONNX, extract embeddings |
 | 03 | `03_train_ce_baseline.ipynb` | Model A — CE baseline (LB 0.773) |
 | 04 | `04_train_mixup.ipynb` | Model B — embedding mixup (LB 0.739) |
 | 05 | `05_train_tta_baseline.ipynb` | Model C — TTA + CE (LB 0.798) |
@@ -63,7 +61,12 @@ Checkpoints and ONNX exports: `repro/outputs/models/best_model/`
 
 ## Kaggle submission
 
-Upload `13_birdclef_submission.ipynb` to Kaggle and attach your ONNX fold models as a dataset. On Colab/Drive it reads models directly from `repro/outputs/models/best_model/`.
+Upload `13_birdclef_submission.ipynb` to Kaggle and attach:
+
+- Your MoE ONNX fold models as a dataset
+- `perch_v2_no_dft.onnx` as a dataset (Kaggle has no internet at inference time)
+
+On Colab/Drive, notebook 13 reads models from `repro/outputs/models/best_model/` and Perch from `BirdCLEF_Project/perch_v2_no_dft.onnx` (cached by notebook 02).
 
 ## Dependencies
 

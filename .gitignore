@@ -6,6 +6,9 @@ __pycache__/
 # PyTorch checkpoints (~15 MB each; keep on Google Drive, not in git)
 *.pth
 
+# Perch v2 ONNX (~394 MB; downloaded by notebook 02, cached on Drive)
+perch_v2_no_dft.onnx
+
 # Large data archives (place in BirdCLEF_Project/ on Drive)
 *.zip
 embeddings_v2/

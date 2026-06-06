@@ -10,6 +10,7 @@ onnxruntime-gpu>=1.16; platform_system != "Darwin"
 onnxruntime>=1.16; platform_system == "Darwin"
 onnxscript>=0.1
 kaggle>=1.6
+huggingface_hub>=0.20
 librosa>=0.10
 jupyter>=1.0
 ipykernel>=6.0

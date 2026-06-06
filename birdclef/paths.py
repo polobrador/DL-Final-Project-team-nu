@@ -8,7 +8,9 @@ RAW_DATA_DIR = CONTENT / "bird_data"
 METADATA_DIR = REPRO_ROOT / "data" / "metadata"
 EMBEDDINGS_DIR = CONTENT / "embeddings_v2"
 EMBEDDINGS_TTA_DIR = CONTENT / "embeddings_v2_TTA"
-PERCH_ONNX = DRIVE_ROOT / "perch_v2_no_dft.onnx"
+PERCH_HF_REPO = "justinchuby/Perch-onnx"
+PERCH_HF_FILENAME = "perch_v2_no_dft.onnx"
+PERCH_ONNX = DRIVE_ROOT / PERCH_HF_FILENAME
 TRAIN_AUDIO_DIR = RAW_DATA_DIR / "train_audio"
 
 TRAIN_CSV = CONTENT / "train.csv"

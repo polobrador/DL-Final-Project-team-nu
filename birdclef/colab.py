@@ -36,6 +36,25 @@ def set_kaggle_token():
     os.environ["KAGGLE_API_TOKEN"] = userdata.get("KAGGLE_API_TOKEN")
 
 
+def ensure_perch_onnx() -> Path:
+    from birdclef.paths import PERCH_HF_FILENAME, PERCH_HF_REPO, PERCH_ONNX
+
+    if PERCH_ONNX.exists():
+        print(f"Using cached Perch ONNX at {PERCH_ONNX}")
+        return PERCH_ONNX
+
+    from huggingface_hub import hf_hub_download
+
+    DRIVE_ROOT.mkdir(parents=True, exist_ok=True)
+    print(f"Downloading Perch v2 ONNX from Hugging Face ({PERCH_HF_REPO}, ~394 MB)...")
+    cached = Path(
+        hf_hub_download(repo_id=PERCH_HF_REPO, filename=PERCH_HF_FILENAME)
+    )
+    shutil.copy2(cached, PERCH_ONNX)
+    print(f"Saved to {PERCH_ONNX}")
+    return PERCH_ONNX
+
+
 def _copy_csv(name: str, dst_dir: Path) -> None:
     dst = dst_dir / name
     if dst.exists():
