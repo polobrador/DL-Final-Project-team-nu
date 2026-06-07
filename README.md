@@ -1,30 +1,72 @@
 # BirdCLEF+ 2026
 
-Reproducible training pipeline for the BirdCLEF+ competition. Designed for Google Colab with the project hosted on Google Drive.
+Reproducible training pipeline for the BirdCLEF+ competition. Runs on Google Colab with the project stored on Google Drive.
 
-## Setup
+## Project setup
 
-1. Clone this repository into `BirdCLEF_Project/repro/` on Google Drive.
-2. Open notebooks from Drive in Colab (GPU runtime).
-3. Add `KAGGLE_API_TOKEN` in Colab secrets for notebook 02.
+### 1. Download and unzip on Google Drive
 
-Notebook 02 downloads the BirdCLEF competition data and the Perch v2 ONNX model automatically. After a first run, optional embedding archives can live in `BirdCLEF_Project/` on Drive:
+Download the repository zip and unzip it anywhere on **My Drive**. The folder name does not matter (e.g. `birdclef-2026`, `repro-main`, etc.).
+
+After unzipping you should have a single folder containing the notebooks, `birdclef/`, and `colab_init.py`:
 
 ```
-BirdCLEF_Project/
-├── perch_v2_no_dft.onnx          # cached by notebook 02 (~394 MB)
-├── embeddings_v2_archive.zip     # optional, after extraction
-├── embeddings_v2_TTA_archive.zip   # optional, after extraction
-└── repro/
-    ├── birdclef/
-    ├── data/metadata/
-    ├── outputs/
-    └── *.ipynb
+your-project-folder/
+├── colab_init.py
+├── birdclef/
+├── data/metadata/
+├── outputs/
+├── requirements.txt
+├── README.md
+└── *.ipynb
 ```
 
-During training, embeddings are unzipped to `/content/` for speed. Models and figures are saved under `repro/outputs/`.
+No extra parent folders are required.
 
-**Git note:** PyTorch checkpoints (`.pth`) and the Perch ONNX file are not in this repo. Checkpoints are ~15 MB each; Perch is ~394 MB. After training, keep them on Drive. Your MoE ONNX exports (~33 KB each) and PNG figures are small enough to commit if you want them in the repo.
+### 2. Open a notebook in Colab
+
+1. Go to [Google Colab](https://colab.research.google.com/).
+2. **File → Open notebook → Google Drive** and open any notebook from the unzipped folder.
+3. Select a **GPU** runtime (**Runtime → Change runtime type**).
+
+Each notebook mounts Drive, locates the project folder automatically, and sets the working directory. You do not need to edit paths.
+
+### 3. Kaggle API token (notebook 02 only)
+
+Before running `02_download_and_extract_embeddings.ipynb`, add a Colab secret:
+
+1. Click the key icon in the left sidebar.
+2. Add a secret named `KAGGLE_API_TOKEN` with your [Kaggle API token](https://www.kaggle.com/settings).
+
+### 4. Run the notebooks in order
+
+| Step | Notebook | What it does |
+|------|----------|--------------|
+| 1 | `01_data_exploration.ipynb` | Explore training metadata |
+| 2 | `02_download_and_extract_embeddings.ipynb` | Download competition data, Perch ONNX, and extract train embeddings |
+| 3–7 | `03`–`07` | Train baseline, ablation, and final models |
+| 8–12 | `08`–`12` | Hyperparameter sweeps and experiments |
+| 13 | `13_birdclef_submission.ipynb` | Generate Kaggle submission |
+
+Notebook 02 must run before any training notebook. It downloads everything needed to get started; no manual file uploads are required.
+
+## What gets created on Drive
+
+After notebook 02, large artifacts are stored inside the project folder:
+
+```
+your-project-folder/
+├── perch_v2_no_dft.onnx              # Perch v2 ONNX (~394 MB, cached)
+├── embeddings_v2/                    # baseline embeddings (.npy)
+├── embeddings_v2_TTA/                # TTA embeddings (.npy)
+├── embeddings_v2_archive.zip         # optional archive (created at end of nb 02)
+├── embeddings_v2_TTA_archive.zip     # optional archive
+├── data/metadata/                    # train.csv, taxonomy.csv, etc.
+└── outputs/                          # models, figures, sweep results
+    └── models/best_model/            # final MoE checkpoints and ONNX exports
+```
+
+During training, embedding archives are copied to `/content/` on the Colab VM for faster I/O. Models and plots are saved under `outputs/` on Drive.
 
 ## Notebooks
 
@@ -57,18 +99,22 @@ During training, embeddings are unzipped to `/content/` for speed. Models and fi
 | CV AUC | 0.9771 ± 0.0005 |
 | Kaggle | 0.798 public / 0.839 private |
 
-Checkpoints and ONNX exports: `repro/outputs/models/best_model/`
+Checkpoints and ONNX exports: `outputs/models/best_model/`
 
 ## Kaggle submission
 
-Upload `13_birdclef_submission.ipynb` to Kaggle and attach:
+Upload `13_birdclef_submission.ipynb` to Kaggle and attach two datasets:
 
-- Your MoE ONNX fold models as a dataset
-- `perch_v2_no_dft.onnx` as a dataset (Kaggle has no internet at inference time)
+- Your 5-fold MoE ONNX models (`outputs/models/best_model/`)
+- `perch_v2_no_dft.onnx` (cached on Drive by notebook 02)
 
-On Colab/Drive, notebook 13 reads models from `repro/outputs/models/best_model/` and Perch from `BirdCLEF_Project/perch_v2_no_dft.onnx` (cached by notebook 02).
+Kaggle notebooks cannot access the internet at inference time, so Perch must be attached as a dataset.
+
+For local testing on Colab/Drive, place test audio in `data/test_soundscapes/` and run notebook 13 from the project folder.
 
 ## Dependencies
+
+Installed automatically in each notebook. Full list:
 
 ```bash
 pip install -r requirements.txt
