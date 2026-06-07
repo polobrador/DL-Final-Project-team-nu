@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from sklearn.model_selection import GroupKFold
 
-from birdclef.paths import EMBEDDINGS_DIR, EMBEDDINGS_TTA_DIR, SAMPLE_SUBMISSION_CSV, TRAIN_CSV
+from birdclef import paths
 
 
 def get_npy_path(ogg_filename, embedding_dir):
@@ -11,9 +11,11 @@ def get_npy_path(ogg_filename, embedding_dir):
     return os.path.join(embedding_dir, safe_name)
 
 
-def load_training_frame(embedding_dir=EMBEDDINGS_DIR):
-    df = pd.read_csv(TRAIN_CSV)
-    sample_sub = pd.read_csv(SAMPLE_SUBMISSION_CSV)
+def load_training_frame(embedding_dir=None):
+    if embedding_dir is None:
+        embedding_dir = paths.EMBEDDINGS_DIR
+    df = pd.read_csv(paths.TRAIN_CSV)
+    sample_sub = pd.read_csv(paths.SAMPLE_SUBMISSION_CSV)
     all_birds = sample_sub.columns.tolist()[1:]
     bird_to_idx = {bird: i for i, bird in enumerate(all_birds)}
     num_classes = len(all_birds)
@@ -34,12 +36,12 @@ def assign_group_kfold(df, n_splits=5):
 
 
 def prepare_baseline_data():
-    df, num_classes, bird_to_idx = load_training_frame(EMBEDDINGS_DIR)
+    df, num_classes, bird_to_idx = load_training_frame(paths.EMBEDDINGS_DIR)
     df = assign_group_kfold(df)
     return df, num_classes, bird_to_idx
 
 
 def prepare_tta_data():
-    df, num_classes, bird_to_idx = load_training_frame(EMBEDDINGS_TTA_DIR)
+    df, num_classes, bird_to_idx = load_training_frame(paths.EMBEDDINGS_TTA_DIR)
     df = assign_group_kfold(df)
     return df, num_classes, bird_to_idx
