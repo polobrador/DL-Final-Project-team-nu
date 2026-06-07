@@ -29,7 +29,7 @@ No extra parent folders are required.
 2. **File → Open notebook → Google Drive** and open any notebook from the unzipped folder.
 3. Select a **GPU** runtime (**Runtime → Change runtime type**).
 
-Each notebook mounts Drive, locates the project folder automatically, and sets the working directory. You do not need to edit paths.
+Each notebook mounts Drive and scans My Drive for the project folder (no path editing needed). Colab's working directory does not have to match the project folder — discovery is automatic as long as the unzipped repo is somewhere on My Drive.
 
 ### 3. Kaggle API token (notebook 02 only)
 
